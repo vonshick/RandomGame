@@ -28,17 +28,17 @@ class MainActivity : AppCompatActivity() {
     fun getSavedNumber(){
         val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
         record = sharedPreference.getInt("savedNumber", 0)
-        textView.text = "Twój obecny wynik to: "+record.toString()
+        textView.text = "Suma twoiich punktów w sesji wynosi: "+record.toString()
     }
 
     fun editSavedNumber() {
-        if (scoresSum > record || record == 0) {
+//        if (scoresSum > record || record == 0) {
             record += scoresSum
             val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
             var editor = sharedPreference.edit()
             editor.putInt("savedNumber", record)
             editor.apply()
-        }
+//        }
     }
 
     fun countScores(shots: Int): Int {
@@ -152,24 +152,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         records.setOnClickListener(){
-            val intent = Intent(this, RecordsActivity::class.java)
+            val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
         }
     }
 }
 
-class getListAsync() : AsyncTask<Void, Void, String>() {
-    override fun doInBackground(vararg params: Void?): String {
-        val text = URL("http://hufiecgniezno.pl/br/record.php?f=get").readText()
-        return(text)
-    }
-    override fun onPreExecute() {
-        super.onPreExecute()
-    }
-    override fun onPostExecute(result: String?) {
-        super.onPostExecute(result)
-    }
-}
 
 class saveRecordAsync(record: Int) : AsyncTask<Void, Void, String>() {
     val innerRecord: Int = record

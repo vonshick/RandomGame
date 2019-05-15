@@ -1,15 +1,44 @@
 package com.example.randomgame
 
-import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import kotlinx.android.synthetic.main.activity_fullscreen.*
-import java.lang.Thread.sleep
+import android.support.v4.app.NavUtils
+import android.util.JsonReader
+import android.util.Log
+import android.view.MenuItem
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_ranking.*
+import org.json.JSONStringer
+import java.io.StringReader
+import java.net.URL
+import android.widget.ArrayAdapter
 
 
-class FullscreenActivity : AppCompatActivity() {
+
+
+class Player (
+    id: String = "",
+    student: String = "",
+    result: String = ""
+)
+
+/**
+ * An example full-screen activity that shows and hides the system UI (i.e.
+ * status bar and navigation/system bar) with user interaction.
+ */
+class RankingActivity : AppCompatActivity() {
+    fun showToast(message: String){
+        Toast.makeText(
+            applicationContext,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
     private val mHideHandler = Handler()
     private val mHidePart2Runnable = Runnable {
         // Delayed removal of status and navigation bar
@@ -47,18 +76,43 @@ class FullscreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_fullscreen)
+        setContentView(R.layout.activity_ranking)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        mVisible = true
+        // Set up the user interaction to manually show or hide the system UI.
+        fullscreen_content.setOnClickListener { toggle() }
 
+        val text = getListAsync().execute().get().toString()
+        val preparedList = text.split("],".toRegex())
+        val playersData : MutableList<Player> = ArrayList()
+        var resultText = "\n      Indeks      Wynik\n\n"
+        var counter = 1
 
-        val thread = Thread(){
-            run{
-                sleep(3000)
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            }
+        for (elem : String in preparedList){
+            val dividedAndCleared = elem
+                .replace("[","")
+                .replace("]","")
+                .replace("\"","")
+                .split(",".toRegex())
+            if(counter != 10)
+                resultText = resultText+counter.toString()+".   "+ dividedAndCleared[1]+"    "+dividedAndCleared[2]+"\n"
+            else
+                resultText = resultText+counter.toString()+". "+ dividedAndCleared[1]+"    "+dividedAndCleared[2]+"\n"
+
+            counter++
+            Log.d("Magic", dividedAndCleared.toString())
+            playersData.add(Player(dividedAndCleared[0], dividedAndCleared[1], dividedAndCleared[2]))
         }
-        thread.start()
+        ranking.text = resultText
+//        val arrayAdapter: ArrayAdapter<Player> = ArrayAdapter<Player>(
+//            this,
+//            android.R.layout.simple_list_item_1,
+//            playersData
+//        )
+
+//        list.adapter = arrayAdapter
+//        Log.d("Czary", text.split("],".toRegex()).toString())
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -67,10 +121,26 @@ class FullscreenActivity : AppCompatActivity() {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        hide()
-//        delayedHide(0)
+//        delayedHide(100)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            // This ID represents the Home or Up button.
+            NavUtils.navigateUpFromSameTask(this)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun toggle() {
+        if (mVisible) {
+            hide()
+        } else {
+            show()
+        }
+    }
 
     private fun hide() {
         // Hide UI first
@@ -122,5 +192,19 @@ class FullscreenActivity : AppCompatActivity() {
          * and a change of the status and navigation bar.
          */
         private val UI_ANIMATION_DELAY = 300
+    }
+}
+
+
+class getListAsync() : AsyncTask<Void, Void, String>() {
+    override fun doInBackground(vararg params: Void?): String {
+        val text = URL("http://hufiecgniezno.pl/br/record.php?f=get").readText()
+        return(text)
+    }
+    override fun onPreExecute() {
+        super.onPreExecute()
+    }
+    override fun onPostExecute(result: String?) {
+        super.onPostExecute(result)
     }
 }
