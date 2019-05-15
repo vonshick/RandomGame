@@ -1,0 +1,186 @@
+package com.example.randomgame
+
+import android.content.Intent
+import android.os.AsyncTask
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
+import kotlin.random.Random
+
+import kotlinx.android.synthetic.main.activity_main.*
+import java.net.URL
+import java.util.EnumSet.range
+
+
+class MainActivity : AppCompatActivity() {
+
+    var currentNumber = 0
+    var record = 0
+    var shots = 0
+    var currentShot = 0
+    var scoresSum = 0
+
+    fun getSavedNumber(){
+        val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
+        record = sharedPreference.getInt("savedNumber", 0)
+        textView.text = "Twój obecny wynik to: "+record.toString()
+    }
+
+    fun editSavedNumber() {
+        if (scoresSum > record || record == 0) {
+            record += scoresSum
+            val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
+            var editor = sharedPreference.edit()
+            editor.putInt("savedNumber", record)
+            editor.apply()
+        }
+    }
+
+    fun countScores(shots: Int): Int {
+        if (shots == 1){
+            return 5
+        } else if ((shots >= 2) and (shots<=4)){
+            return 3
+        } else if ((shots >= 5) and (shots<=6)){
+            return 2
+        } else if ((shots >= 7) and (shots<=10)){
+            return 1
+        } else {
+            return 0
+        }
+    }
+
+    fun newGame(){
+        scoresSum = 0
+        shots = 0
+        currentNumber = Random.nextInt(0, 20)
+    }
+
+    fun showToast(message: String){
+        Toast.makeText(
+            applicationContext,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    fun loseDialog(){
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("Przegrałeś!")
+        builder.setMessage("Gra rozpocznie się od nowa")
+        builder.setPositiveButton("OK") { _, which ->
+            showToast("Rozpoczynamy nową grę!")
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    fun winDialog(scores: Int){
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("Trafiłeś!")
+        builder.setMessage("Liczba strzałów potrzebnych do zwycięstwa: " + shots.toString() +"\nUzyskane punkty: "+scores.toString())
+        builder.setPositiveButton("Super") { dialog, which ->
+            showToast("Rozpoczynamy nową grę!")
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    fun saveRecord(){
+        val text = saveRecordAsync(record).execute().get().toString()
+        if(text.equals("OK")){
+            showToast("Rekord zapisany na serwerze!")
+        } else {
+            showToast("Nie udało się zapisać rekordu na serwerze")
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        textView.text = "Nie ustanowiłeś jeszcze rekordu"
+        currentNumber = Random.nextInt(0,20)
+
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                var isReady = !editText.getText().toString().isEmpty();
+                shoot.setEnabled(isReady)
+            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+        newGame.setOnClickListener {
+            newGame()
+            showToast("Wylosowano nową liczbę!")
+        }
+
+        shoot.setOnClickListener {
+            shots++
+            if(shots > 10){
+                shots = 0
+                loseDialog()
+                editText.getText().clear()
+            } else {
+                currentShot = editText.text.toString().toInt()
+                editText.getText().clear()
+                if (currentShot > 20 || currentShot < 0) {
+                    showToast("Liczba musi należeć do przedziału od 0 do 20!")
+                } else {
+                    if (currentShot > currentNumber) {
+                        showToast("Wybierz mniejszą liczbę! \nLiczba strzałów: " + shots.toString())
+                    } else if (currentShot < currentNumber) {
+                        showToast("Wybierz większą liczbę! \nLiczba strzałów: " + shots.toString())
+                    } else {
+                        var scores = countScores(shots)
+                        scoresSum += scores
+                        winDialog(scores)
+                        editSavedNumber()
+                        getSavedNumber()
+                        saveRecord()
+                        newGame()
+                    }
+                }
+            }
+        }
+        records.setOnClickListener(){
+            val intent = Intent(this, RecordsActivity::class.java)
+            startActivity(intent)
+        }
+    }
+}
+
+class getListAsync() : AsyncTask<Void, Void, String>() {
+    override fun doInBackground(vararg params: Void?): String {
+        val text = URL("http://hufiecgniezno.pl/br/record.php?f=get").readText()
+        return(text)
+    }
+    override fun onPreExecute() {
+        super.onPreExecute()
+    }
+    override fun onPostExecute(result: String?) {
+        super.onPostExecute(result)
+    }
+}
+
+class saveRecordAsync(record: Int) : AsyncTask<Void, Void, String>() {
+    val innerRecord: Int = record
+    override fun doInBackground(vararg params: Void?): String {
+        val text = URL("http://hufiecgniezno.pl/br/record.php?f=add&id=132335&r="+innerRecord.toString()).readText()
+        return(text)
+    }
+    override fun onPreExecute() {
+        super.onPreExecute()
+    }
+    override fun onPostExecute(result: String?) {
+        super.onPostExecute(result)
+    }
+}
