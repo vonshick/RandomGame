@@ -22,13 +22,10 @@ import org.json.JSONStringer
 import java.io.StringReader
 import java.net.URL
 import android.widget.ArrayAdapter
+import android.net.NetworkInfo
+import android.net.ConnectivityManager
+import java.lang.Boolean.TRUE
 
-
-//class Player (
-//    id: String = "",
-//    student: String = "",
-//    result: String = ""
-//)
 
 class Result {
     var id: Int = 0
@@ -39,24 +36,19 @@ class Result {
         this.userName = userName
         this.result = result
     }
-    constructor(userName: String, result: String) {
-        this.userName = userName
-        this.result = result
-    }
 }
 
-class RecordsDBOpenHelper(context: Context,
-                           factory: SQLiteDatabase.CursorFactory?) :
-    SQLiteOpenHelper(context, DATABASE_NAME,
-        factory, DATABASE_VERSION) {
+class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " +
                 TABLE_NAME + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY," +
                 USERNAME_COLUMN_NAME
-                + " TEXT" +
+                + " TEXT," +
                 RESULT_COLUMN_NAME
                 + " TEXT" + ")")
+//        val CREATE_PRODUCTS_TABLE = "CREATE TABLE records(_id INTEGER PRIMARY KEY, username TEXT, result TEXT)"
+        Log.d("Magic", CREATE_PRODUCTS_TABLE)
         db.execSQL(CREATE_PRODUCTS_TABLE)
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -65,6 +57,7 @@ class RecordsDBOpenHelper(context: Context,
     }
     fun addResult(result: Result) {
         val values = ContentValues()
+        values.put(COLUMN_ID, result.id)
         values.put(USERNAME_COLUMN_NAME, result.userName)
         values.put(RESULT_COLUMN_NAME, result.result)
         val db = this.writableDatabase
@@ -75,9 +68,14 @@ class RecordsDBOpenHelper(context: Context,
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
+    fun deleteAllResults() {
+        val db = this.writableDatabase
+        val _success = db.delete(TABLE_NAME, null, null)
+        db.close()
+    }
     companion object {
         private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "randomGame.db"
+        private val DATABASE_NAME = "randomGame4.db"
         val TABLE_NAME = "records"
         val COLUMN_ID = "_id"
         val USERNAME_COLUMN_NAME = "username"
@@ -93,6 +91,12 @@ class RankingActivity : AppCompatActivity() {
             message,
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     private val mHideHandler = Handler()
@@ -132,34 +136,46 @@ class RankingActivity : AppCompatActivity() {
         // Set up the user interaction to manually show or hide the system UI.
         fullscreen_content.setOnClickListener { toggle() }
 
+        //https://blog.mindorks.com/android-sqlite-database-in-kotlin
+        //great tutorial for sqlite db
 
         val dbHandler = RecordsDBOpenHelper(this, null)
-
         val text = getListAsync().execute().get().toString()
         val preparedList = text.split("],".toRegex())
-        val playersData : MutableList<Result> = ArrayList()
         var resultText = "\n      Indeks      Wynik\n\n"
-        var counter = 1
         var result : Result
+        var counter = 1
 
-        for (elem : String in preparedList){
-            val dividedAndCleared = elem
-                .replace("[","")
-                .replace("]","")
-                .replace("\"","")
-                .split(",".toRegex())
-            if(counter != 10)
-                resultText = resultText+counter.toString()+".   "+ dividedAndCleared[1]+"    "+dividedAndCleared[2]+"\n"
-            else
-                resultText = resultText+counter.toString()+". "+ dividedAndCleared[1]+"    "+dividedAndCleared[2]+"\n"
-
+        if (isNetworkAvailable()) {
+            dbHandler.deleteAllResults()
+            for (elem: String in preparedList) {
+                val dividedAndCleared = elem
+                    .replace("[", "")
+                    .replace("]", "")
+                    .replace("\"", "")
+                    .split(",".toRegex())
+                resultText = resultText + counter.toString() + ".   " + dividedAndCleared[1] + "    " + dividedAndCleared[2] + "\n"
+                Log.d("Magic", dividedAndCleared.toString())
+                result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
+                dbHandler.addResult(result)
+                counter++
+            }
+            ranking.text = resultText
+        } else {
+            val cursor = dbHandler.getAllResults()
+            cursor!!.moveToFirst()
+            resultText = resultText  + counter.toString() + ".   " +
+                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "    " +
+                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
             counter++
-            Log.d("Magic", dividedAndCleared.toString())
-            result = Result(dividedAndCleared[0].toInt(), dividedAndCleared[1], dividedAndCleared[2])
-//            playersData.add(result)
-            dbHandler.addResult(result)
+            while (cursor.moveToNext()) {
+                resultText = resultText  + counter.toString() + ".   " +
+                        cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "    " +
+                        cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
+                counter++
+            }
+            cursor.close()
         }
-        ranking.text = resultText
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
