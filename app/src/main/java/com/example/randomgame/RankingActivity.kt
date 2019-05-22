@@ -140,13 +140,14 @@ class RankingActivity : AppCompatActivity() {
         //great tutorial for sqlite db
 
         val dbHandler = RecordsDBOpenHelper(this, null)
-        val text = getListAsync().execute().get().toString()
-        val preparedList = text.split("],".toRegex())
-        var resultText = "\n      Indeks      Wynik\n\n"
+
+        var resultText = "\nIndeks  -  Wynik\n\n"
         var result : Result
         var counter = 1
 
         if (isNetworkAvailable()) {
+            val text = getListAsync().execute().get().toString()
+            val preparedList = text.split("],".toRegex())
             dbHandler.deleteAllResults()
             for (elem: String in preparedList) {
                 val dividedAndCleared = elem
@@ -154,28 +155,29 @@ class RankingActivity : AppCompatActivity() {
                     .replace("]", "")
                     .replace("\"", "")
                     .split(",".toRegex())
-                resultText = resultText + counter.toString() + ".   " + dividedAndCleared[1] + "    " + dividedAndCleared[2] + "\n"
+                resultText = resultText + counter.toString() + ".  " + dividedAndCleared[1] + "  -  " + dividedAndCleared[2] + "\n"
                 Log.d("Magic", dividedAndCleared.toString())
                 result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
                 dbHandler.addResult(result)
                 counter++
             }
-            ranking.text = resultText
         } else {
             val cursor = dbHandler.getAllResults()
             cursor!!.moveToFirst()
-            resultText = resultText  + counter.toString() + ".   " +
-                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "    " +
+            resultText = resultText  + counter.toString() + ".  " +
+                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
                     cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
             counter++
             while (cursor.moveToNext()) {
-                resultText = resultText  + counter.toString() + ".   " +
-                        cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "    " +
+                resultText = resultText  + counter.toString() + ".  " +
+                        cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
                         cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
                 counter++
             }
             cursor.close()
         }
+
+        ranking.text = resultText
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
