@@ -1,9 +1,15 @@
 package com.example.randomgame
 
+import android.content.ContentValues
+import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.provider.BaseColumns
 import android.view.View
 import android.support.v4.app.NavUtils
 import android.util.JsonReader
@@ -18,18 +24,68 @@ import java.net.URL
 import android.widget.ArrayAdapter
 
 
+//class Player (
+//    id: String = "",
+//    student: String = "",
+//    result: String = ""
+//)
+
+class Result {
+    var id: Int = 0
+    var userName: String? = null
+    var result: String? = null
+    constructor(id: Int, userName: String, result: String) {
+        this.id = id
+        this.userName = userName
+        this.result = result
+    }
+    constructor(userName: String, result: String) {
+        this.userName = userName
+        this.result = result
+    }
+}
+
+class RecordsDBOpenHelper(context: Context,
+                           factory: SQLiteDatabase.CursorFactory?) :
+    SQLiteOpenHelper(context, DATABASE_NAME,
+        factory, DATABASE_VERSION) {
+    override fun onCreate(db: SQLiteDatabase) {
+        val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " +
+                TABLE_NAME + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY," +
+                USERNAME_COLUMN_NAME
+                + " TEXT" +
+                RESULT_COLUMN_NAME
+                + " TEXT" + ")")
+        db.execSQL(CREATE_PRODUCTS_TABLE)
+    }
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
+        onCreate(db)
+    }
+    fun addResult(result: Result) {
+        val values = ContentValues()
+        values.put(USERNAME_COLUMN_NAME, result.userName)
+        values.put(RESULT_COLUMN_NAME, result.result)
+        val db = this.writableDatabase
+        db.insert(TABLE_NAME, null, values)
+        db.close()
+    }
+    fun getAllResults(): Cursor? {
+        val db = this.readableDatabase
+        return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
+    }
+    companion object {
+        private val DATABASE_VERSION = 1
+        private val DATABASE_NAME = "randomGame.db"
+        val TABLE_NAME = "records"
+        val COLUMN_ID = "_id"
+        val USERNAME_COLUMN_NAME = "username"
+        val RESULT_COLUMN_NAME = "result"
+    }
+}
 
 
-class Player (
-    id: String = "",
-    student: String = "",
-    result: String = ""
-)
-
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 class RankingActivity : AppCompatActivity() {
     fun showToast(message: String){
         Toast.makeText(
@@ -66,12 +122,6 @@ class RankingActivity : AppCompatActivity() {
      * system UI. This is to prevent the jarring behavior of controls going away
      * while interacting with activity UI.
      */
-    private val mDelayHideTouchListener = View.OnTouchListener { _, _ ->
-        if (AUTO_HIDE) {
-            delayedHide(AUTO_HIDE_DELAY_MILLIS)
-        }
-        false
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,11 +132,15 @@ class RankingActivity : AppCompatActivity() {
         // Set up the user interaction to manually show or hide the system UI.
         fullscreen_content.setOnClickListener { toggle() }
 
+
+        val dbHandler = RecordsDBOpenHelper(this, null)
+
         val text = getListAsync().execute().get().toString()
         val preparedList = text.split("],".toRegex())
-        val playersData : MutableList<Player> = ArrayList()
+        val playersData : MutableList<Result> = ArrayList()
         var resultText = "\n      Indeks      Wynik\n\n"
         var counter = 1
+        var result : Result
 
         for (elem : String in preparedList){
             val dividedAndCleared = elem
@@ -101,27 +155,15 @@ class RankingActivity : AppCompatActivity() {
 
             counter++
             Log.d("Magic", dividedAndCleared.toString())
-            playersData.add(Player(dividedAndCleared[0], dividedAndCleared[1], dividedAndCleared[2]))
+            result = Result(dividedAndCleared[0].toInt(), dividedAndCleared[1], dividedAndCleared[2])
+//            playersData.add(result)
+            dbHandler.addResult(result)
         }
         ranking.text = resultText
-//        val arrayAdapter: ArrayAdapter<Player> = ArrayAdapter<Player>(
-//            this,
-//            android.R.layout.simple_list_item_1,
-//            playersData
-//        )
-
-//        list.adapter = arrayAdapter
-//        Log.d("Czary", text.split("],".toRegex()).toString())
-
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-//        delayedHide(100)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -163,15 +205,6 @@ class RankingActivity : AppCompatActivity() {
         // Schedule a runnable to display UI elements after a delay
         mHideHandler.removeCallbacks(mHidePart2Runnable)
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY.toLong())
-    }
-
-    /**
-     * Schedules a call to hide() in [delayMillis], canceling any
-     * previously scheduled calls.
-     */
-    private fun delayedHide(delayMillis: Int) {
-        mHideHandler.removeCallbacks(mHideRunnable)
-        mHideHandler.postDelayed(mHideRunnable, delayMillis.toLong())
     }
 
     companion object {
