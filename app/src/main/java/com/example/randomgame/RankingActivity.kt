@@ -27,15 +27,9 @@ import android.net.ConnectivityManager
 import java.lang.Boolean.TRUE
 
 
-class Result {
-    var id: Int = 0
-    var userName: String? = null
-    var result: String? = null
-    constructor(id: Int, userName: String, result: String) {
-        this.id = id
-        this.userName = userName
-        this.result = result
-    }
+class Result(var id: Int, userName: String, result: String) {
+    var userName: String? = userName
+    var result: String? = result
 }
 
 class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -70,7 +64,7 @@ class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactor
     }
     fun deleteAllResults() {
         val db = this.writableDatabase
-        val _success = db.delete(TABLE_NAME, null, null)
+        db.delete(TABLE_NAME, null, null)
         db.close()
     }
     companion object {
@@ -83,6 +77,18 @@ class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactor
     }
 }
 
+class getListAsync() : AsyncTask<Void, Void, String>() {
+    override fun doInBackground(vararg params: Void?): String {
+        val text = URL("http://hufiecgniezno.pl/br/record.php?f=get").readText()
+        return(text)
+    }
+    override fun onPreExecute() {
+        super.onPreExecute()
+    }
+    override fun onPostExecute(result: String?) {
+        super.onPostExecute(result)
+    }
+}
 
 class RankingActivity : AppCompatActivity() {
     fun showToast(message: String){
@@ -99,46 +105,12 @@ class RankingActivity : AppCompatActivity() {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
-    private val mHideHandler = Handler()
-    private val mHidePart2Runnable = Runnable {
-        // Delayed removal of status and navigation bar
-
-        // Note that some of these constants are new as of API 16 (Jelly Bean)
-        // and API 19 (KitKat). It is safe to use them, as they are inlined
-        // at compile-time and do nothing on earlier devices.
-        fullscreen_content.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                    View.SYSTEM_UI_FLAG_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-    }
-    private val mShowPart2Runnable = Runnable {
-        // Delayed display of UI elements
-        supportActionBar?.show()
-        fullscreen_content_controls.visibility = View.VISIBLE
-    }
-    private var mVisible: Boolean = false
-    private val mHideRunnable = Runnable { hide() }
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_ranking)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        mVisible = true
-        // Set up the user interaction to manually show or hide the system UI.
-        fullscreen_content.setOnClickListener { toggle() }
 
         //https://blog.mindorks.com/android-sqlite-database-in-kotlin
         //great tutorial for sqlite db
-
         val dbHandler = RecordsDBOpenHelper(this, null)
 
         var resultText = "\nIndeks  -  Wynik\n\n"
@@ -162,6 +134,7 @@ class RankingActivity : AppCompatActivity() {
                 counter++
             }
         } else {
+            showToast("Sieć niedostępna. Wyniki wyświetlono z bazy danych.")
             val cursor = dbHandler.getAllResults()
             cursor!!.moveToFirst()
             resultText = resultText  + counter.toString() + ".  " +
@@ -192,70 +165,5 @@ class RankingActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun toggle() {
-        if (mVisible) {
-            hide()
-        } else {
-            show()
-        }
-    }
-
-    private fun hide() {
-        // Hide UI first
-        supportActionBar?.hide()
-        fullscreen_content_controls.visibility = View.GONE
-        mVisible = false
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable)
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY.toLong())
-    }
-
-    private fun show() {
-        // Show the system bar
-        fullscreen_content.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        mVisible = true
-
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable)
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY.toLong())
-    }
-
-    companion object {
-        /**
-         * Whether or not the system UI should be auto-hidden after
-         * [AUTO_HIDE_DELAY_MILLIS] milliseconds.
-         */
-        private val AUTO_HIDE = true
-
-        /**
-         * If [AUTO_HIDE] is set, the number of milliseconds to wait after
-         * user interaction before hiding the system UI.
-         */
-        private val AUTO_HIDE_DELAY_MILLIS = 3000
-
-        /**
-         * Some older devices needs a small delay between UI widget updates
-         * and a change of the status and navigation bar.
-         */
-        private val UI_ANIMATION_DELAY = 300
-    }
-}
-
-
-class getListAsync() : AsyncTask<Void, Void, String>() {
-    override fun doInBackground(vararg params: Void?): String {
-        val text = URL("http://hufiecgniezno.pl/br/record.php?f=get").readText()
-        return(text)
-    }
-    override fun onPreExecute() {
-        super.onPreExecute()
-    }
-    override fun onPostExecute(result: String?) {
-        super.onPostExecute(result)
     }
 }
