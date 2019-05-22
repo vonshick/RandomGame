@@ -24,6 +24,8 @@ import java.net.URL
 import android.widget.ArrayAdapter
 import android.net.NetworkInfo
 import android.net.ConnectivityManager
+import android.view.Gravity
+import android.widget.TextView
 import java.lang.Boolean.TRUE
 
 
@@ -92,17 +94,62 @@ class getListAsync() : AsyncTask<Void, Void, String>() {
 
 class RankingActivity : AppCompatActivity() {
     fun showToast(message: String){
-        Toast.makeText(
+        val toast = Toast.makeText(
             applicationContext,
             message,
             Toast.LENGTH_SHORT
-        ).show()
+        )
+        val v = toast.getView().findViewById(android.R.id.message) as TextView
+        v.gravity = Gravity.CENTER
+        toast.show()
     }
 
-    private fun isNetworkAvailable(): Boolean {
+    fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
+    }
+
+    fun getDataFromDb(dbHandler: RecordsDBOpenHelper): String{
+        var resultText = "  \nIndeks  -  Wynik\n\n"
+        var counter = 1
+        showToast("Sieć niedostępna.\nWyniki wyświetlono z bazy danych.")
+        val cursor = dbHandler.getAllResults()
+        cursor!!.moveToFirst()
+        resultText = resultText  + counter.toString() + ".  " +
+                cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
+                cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
+        counter++
+        while (cursor.moveToNext()) {
+            resultText = resultText  + counter.toString() + ".  " +
+                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
+                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
+            counter++
+        }
+        cursor.close()
+        return(resultText)
+    }
+
+    fun downloadDataFromServer(dbHandler: RecordsDBOpenHelper): String{
+        var resultText = "  \nIndeks  -  Wynik\n\n"
+        var result : Result
+        var counter = 1
+        val text = getListAsync().execute().get().toString()
+        val preparedList = text.split("],".toRegex())
+        dbHandler.deleteAllResults()
+        for (elem: String in preparedList) {
+            val dividedAndCleared = elem
+                .replace("[", "")
+                .replace("]", "")
+                .replace("\"", "")
+                .split(",".toRegex())
+            resultText = resultText + counter.toString() + ".  " + dividedAndCleared[1] + "  -  " + dividedAndCleared[2] + "\n"
+            Log.d("Magic", dividedAndCleared.toString())
+            result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
+            dbHandler.addResult(result)
+            counter++
+        }
+        return(resultText)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,44 +160,12 @@ class RankingActivity : AppCompatActivity() {
         //great tutorial for sqlite db
         val dbHandler = RecordsDBOpenHelper(this, null)
 
-        var resultText = "\nIndeks  -  Wynik\n\n"
-        var result : Result
-        var counter = 1
-
         if (isNetworkAvailable()) {
-            val text = getListAsync().execute().get().toString()
-            val preparedList = text.split("],".toRegex())
-            dbHandler.deleteAllResults()
-            for (elem: String in preparedList) {
-                val dividedAndCleared = elem
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replace("\"", "")
-                    .split(",".toRegex())
-                resultText = resultText + counter.toString() + ".  " + dividedAndCleared[1] + "  -  " + dividedAndCleared[2] + "\n"
-                Log.d("Magic", dividedAndCleared.toString())
-                result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
-                dbHandler.addResult(result)
-                counter++
-            }
+            ranking.text = downloadDataFromServer(dbHandler)
         } else {
-            showToast("Sieć niedostępna. Wyniki wyświetlono z bazy danych.")
-            val cursor = dbHandler.getAllResults()
-            cursor!!.moveToFirst()
-            resultText = resultText  + counter.toString() + ".  " +
-                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
-                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
-            counter++
-            while (cursor.moveToNext()) {
-                resultText = resultText  + counter.toString() + ".  " +
-                        cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
-                        cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
-                counter++
-            }
-            cursor.close()
+            ranking.text = getDataFromDb(dbHandler)
         }
 
-        ranking.text = resultText
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

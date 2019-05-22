@@ -17,4 +17,9 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="za_konto">ZAŁÓŻ KONTO</string>
+    <string name="dodaj_u_ytkownika">Dodaj użytkownika</string>
+    <string name="login">Login</string>
+    <string name="has_o">Hasło</string>
+    <string name="powt_rz_has_o">Powtórz hasło</string>
+    <string name="zarejestruj">Zarejestruj</string>
 </resources>
