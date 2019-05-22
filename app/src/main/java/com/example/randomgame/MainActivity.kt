@@ -11,6 +11,8 @@ import android.widget.Toast
 import kotlin.random.Random
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.textView
+import kotlinx.android.synthetic.main.activity_sign_in.*
 import java.net.URL
 
 
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     var shots = 0
     var currentShot = 0
     var scoresSum = 0
+    var username = ""
 
     fun getSavedNumber(){
         val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
@@ -89,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun saveRecord(){
-        val text = saveRecordAsync(record).execute().get().toString()
+        val text = saveRecordAsync(record, username).execute().get().toString()
         if(text.equals("OK")){
             showToast("Rekord zapisany na serwerze!")
         } else {
@@ -98,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        username = getIntent().getStringExtra("USERNAME")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -118,6 +122,11 @@ class MainActivity : AppCompatActivity() {
         newGameButton.setOnClickListener {
             newGame()
             showToast("Wylosowano nową liczbę!")
+        }
+
+        logout.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
         shoot.setOnClickListener {
@@ -156,10 +165,11 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-class saveRecordAsync(record: Int) : AsyncTask<Void, Void, String>() {
+class saveRecordAsync(record: Int, username: String) : AsyncTask<Void, Void, String>() {
     val innerRecord: Int = record
+    val innerUsername: String = username
     override fun doInBackground(vararg params: Void?): String {
-        val text = URL("http://hufiecgniezno.pl/br/record.php?f=add&id=132335&r="+innerRecord.toString()).readText()
+        val text = URL("http://hufiecgniezno.pl/br/record.php?f=add&id="+innerUsername+"&r="+innerRecord.toString()).readText()
         return(text)
     }
     override fun onPreExecute() {

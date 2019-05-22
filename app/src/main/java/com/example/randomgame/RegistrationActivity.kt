@@ -44,18 +44,30 @@ class CredentialsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFa
         db.insert(TABLE_NAME, null, values)
         db.close()
     }
-    fun getAllResults(): Cursor? {
+    fun checkCredentials(login: String, password: String): Boolean {
         val db = this.readableDatabase
-        return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
+        val cursor = db.rawQuery("SELECT $USERNAME_COLUMN_NAME, $PASSWORD_COLUMN_NAME " +
+                "FROM $TABLE_NAME " +
+                "WHERE $USERNAME_COLUMN_NAME = \"$login\"", null)
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst()
+            val passwordFromDb = cursor.getString(cursor.getColumnIndex(CredentialsDBOpenHelper.PASSWORD_COLUMN_NAME))
+            if(passwordFromDb.equals(password)){
+                cursor.close()
+                return(true)
+            } else {
+                cursor.close()
+                return(false)
+            }
+        } else {
+            return(false)
+        }
+
     }
-    fun deleteAllResults() {
-        val db = this.writableDatabase
-        db.delete(TABLE_NAME, null, null)
-        db.close()
-    }
+
     companion object {
         private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "randomGame5.db"
+        private val DATABASE_NAME = "randomGame6.db"
         val TABLE_NAME = "credentials"
         val USERNAME_COLUMN_NAME = "username"
         val PASSWORD_COLUMN_NAME = "password"
