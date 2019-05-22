@@ -7,14 +7,11 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import kotlin.random.Random
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.net.URL
-import java.util.EnumSet.range
 
 
 class MainActivity : AppCompatActivity() {
@@ -107,9 +104,9 @@ class MainActivity : AppCompatActivity() {
         textView.text = "Nie ustanowiłeś jeszcze rekordu"
         currentNumber = Random.nextInt(0,20)
 
-        editText.addTextChangedListener(object : TextWatcher {
+        number.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                var isReady = !editText.getText().toString().isEmpty();
+                var isReady = !number.getText().toString().isEmpty();
                 shoot.setEnabled(isReady)
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -118,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        newGame.setOnClickListener {
+        newGameButton.setOnClickListener {
             newGame()
             showToast("Wylosowano nową liczbę!")
         }
@@ -128,10 +125,10 @@ class MainActivity : AppCompatActivity() {
             if(shots > 10){
                 shots = 0
                 loseDialog()
-                editText.getText().clear()
+                number.getText().clear()
             } else {
-                currentShot = editText.text.toString().toInt()
-                editText.getText().clear()
+                currentShot = number.text.toString().toInt()
+                number.getText().clear()
                 if (currentShot > 20 || currentShot < 0) {
                     showToast("Liczba musi należeć do przedziału od 0 do 20!")
                 } else {
