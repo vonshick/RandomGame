@@ -155,12 +155,13 @@ class RankingActivity : AppCompatActivity() {
             cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME))
         )
         resultsList.add(result)
-
+        counter++
         while (cursor.moveToNext()) {
             result = Result(counter,
                 cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)),
                 cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)))
             resultsList.add(result)
+            counter++
         }
 
         cursor.close()

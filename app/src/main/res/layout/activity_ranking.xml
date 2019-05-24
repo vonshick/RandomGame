@@ -25,6 +25,11 @@
                  android:layout_height="match_parent"
                  android:fitsSystemWindows="true">
 
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </LinearLayout>
         <LinearLayout android:id="@+id/fullscreen_content_controls"
                       style="?metaButtonBarStyle"
                       android:layout_width="match_parent"
