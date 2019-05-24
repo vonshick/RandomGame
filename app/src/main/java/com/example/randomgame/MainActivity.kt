@@ -12,12 +12,10 @@ import kotlin.random.Random
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.textView
-import kotlinx.android.synthetic.main.activity_sign_in.*
 import java.net.URL
 
 
 class MainActivity : AppCompatActivity() {
-
     var currentNumber = 0
     var record = 0
     var shots = 0
@@ -91,9 +89,15 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    fun getResponseLastLine(text: String): String{
+        return(text.takeLast(2))
+    }
+
     fun saveRecord(){
-        val text = saveRecordAsync(record, username).execute().get().toString()
-        if(text.equals("OK")){
+        val rawText = saveRecordAsync(record, username).execute().get().toString()
+        val response = getResponseLastLine(rawText)
+
+        if(response.equals("OK")){
             showToast("Rekord zapisany na serwerze!")
         } else {
             showToast("Nie udało się zapisać rekordu na serwerze")
@@ -163,7 +167,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
 
 class saveRecordAsync(record: Int, username: String) : AsyncTask<Void, Void, String>() {
     val innerRecord: Int = record
