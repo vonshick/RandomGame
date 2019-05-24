@@ -26,17 +26,15 @@ class MainActivity : AppCompatActivity() {
     fun getSavedNumber(){
         val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
         record = sharedPreference.getInt("savedNumber", 0)
-        textView.text = "Suma twoiich punktów w sesji wynosi: "+record.toString()
+        textView.text = "Suma twoich punktów w sesji wynosi: "+record.toString()
     }
 
     fun editSavedNumber() {
-//        if (scoresSum > record || record == 0) {
-            record += scoresSum
-            val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
-            var editor = sharedPreference.edit()
-            editor.putInt("savedNumber", record)
-            editor.apply()
-//        }
+        record += scoresSum
+        val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
+        var editor = sharedPreference.edit()
+        editor.putInt("savedNumber", record)
+        editor.apply()
     }
 
     fun countScores(shots: Int): Int {

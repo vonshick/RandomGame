@@ -59,7 +59,7 @@ class ResultsListViewAdapter(private val activity: Activity, results: ArrayList<
         var place = vi.findViewById(R.id.place) as TextView
         var username = vi.findViewById(R.id.username) as TextView
         var result = vi.findViewById(R.id.result) as TextView
-        place.text = results[i].id.toString()
+        place.text = results[i].id.toString()+"."
         username.text = results[i].userName
         result.text = results[i].result
         return vi
