@@ -1,5 +1,7 @@
 package com.example.randomgame
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -10,28 +12,58 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.BaseColumns
-import android.view.View
 import android.support.v4.app.NavUtils
 import android.util.JsonReader
 import android.util.Log
-import android.view.MenuItem
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_ranking.*
 import org.json.JSONStringer
 import java.io.StringReader
 import java.net.URL
-import android.widget.ArrayAdapter
 import android.net.NetworkInfo
 import android.net.ConnectivityManager
-import android.view.Gravity
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import java.lang.Boolean.TRUE
 
 
 class Result(var id: Int, userName: String, result: String) {
     var userName: String? = userName
     var result: String? = result
+}
+
+class ResultsListViewAdapter(private val activity: Activity, results: ArrayList<Result>) : BaseAdapter() {
+
+    private var results: ArrayList<Result>
+
+    init {
+        this.results = results
+    }
+
+    override fun getCount(): Int {
+        return results.size
+    }
+
+    override fun getItem(i: Int): Any {
+        return i
+    }
+
+    override fun getItemId(i: Int): Long {
+        return i.toLong()
+    }
+
+    @SuppressLint("InflateParams", "ViewHolder")
+    override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup): View {
+        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        var vi = inflater.inflate(R.layout.list_item, null)
+        var place = vi.findViewById(R.id.place) as TextView
+        var username = vi.findViewById(R.id.username) as TextView
+        var result = vi.findViewById(R.id.result) as TextView
+        place.text = results[i].id.toString()
+        username.text = results[i].userName
+        result.text = results[i].result
+        return vi
+    }
 }
 
 class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -43,7 +75,6 @@ class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactor
                 + " TEXT," +
                 RESULT_COLUMN_NAME
                 + " TEXT" + ")")
-//        val CREATE_PRODUCTS_TABLE = "CREATE TABLE records(_id INTEGER PRIMARY KEY, username TEXT, result TEXT)"
         Log.d("Magic", CREATE_PRODUCTS_TABLE)
         db.execSQL(CREATE_PRODUCTS_TABLE)
     }
@@ -110,28 +141,36 @@ class RankingActivity : AppCompatActivity() {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
-    fun getDataFromDb(dbHandler: RecordsDBOpenHelper): String{
-        var resultText = "  \nIndeks  -  Wynik\n\n"
+    fun getDataFromDb(dbHandler: RecordsDBOpenHelper) {
         var counter = 1
+        var result: Result
+        var resultsList = ArrayList<Result>()
+
         showToast("Sieć niedostępna.\nWyniki wyświetlono z bazy danych.")
         val cursor = dbHandler.getAllResults()
         cursor!!.moveToFirst()
-        resultText = resultText  + counter.toString() + ".  " +
-                cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
-                cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
-        counter++
+        result = Result(
+            counter,
+            cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)),
+            cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME))
+        )
+        resultsList.add(result)
+
         while (cursor.moveToNext()) {
-            resultText = resultText  + counter.toString() + ".  " +
-                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)) + "  -  " +
-                    cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)) + "\n"
-            counter++
+            result = Result(counter,
+                cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.USERNAME_COLUMN_NAME)),
+                cursor.getString(cursor.getColumnIndex(RecordsDBOpenHelper.RESULT_COLUMN_NAME)))
+            resultsList.add(result)
         }
+
         cursor.close()
-        return(resultText)
+        var adapter = ResultsListViewAdapter(this, resultsList)
+        listView.adapter = adapter
     }
 
-    fun downloadDataFromServer(dbHandler: RecordsDBOpenHelper): String{
-        var resultText = "  \nIndeks  -  Wynik\n\n"
+    fun downloadDataFromServer(dbHandler: RecordsDBOpenHelper) {
+        var resultsList = ArrayList<Result>()
+        var adapter: ResultsListViewAdapter
         var result : Result
         var counter = 1
         val text = getListAsync().execute().get().toString()
@@ -143,27 +182,25 @@ class RankingActivity : AppCompatActivity() {
                 .replace("]", "")
                 .replace("\"", "")
                 .split(",".toRegex())
-            resultText = resultText + counter.toString() + ".  " + dividedAndCleared[1] + "  -  " + dividedAndCleared[2] + "\n"
-            Log.d("Magic", dividedAndCleared.toString())
             result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
+            resultsList.add(result)
             dbHandler.addResult(result)
             counter++
         }
-        return(resultText)
+        adapter = ResultsListViewAdapter(this, resultsList)
+        listView.adapter = adapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
 
-        //https://blog.mindorks.com/android-sqlite-database-in-kotlin
-        //great tutorial for sqlite db
         val dbHandler = RecordsDBOpenHelper(this, null)
 
         if (isNetworkAvailable()) {
-            ranking.text = downloadDataFromServer(dbHandler)
+            downloadDataFromServer(dbHandler)
         } else {
-            ranking.text = getDataFromDb(dbHandler)
+            getDataFromDb(dbHandler)
         }
 
     }
