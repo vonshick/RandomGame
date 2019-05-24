@@ -1,5 +1,6 @@
 package com.example.randomgame
 
+import android.app.Activity
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -12,6 +13,7 @@ import kotlin.random.Random
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.textView
+import kotlinx.android.synthetic.main.activity_sign_in.*
 import java.net.URL
 
 
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     var shots = 0
     var currentShot = 0
     var scoresSum = 0
-    var username = ""
+    var username : String? = ""
 
     fun getSavedNumber(){
         val sharedPreference = getSharedPreferences("com.example.randomgame.prefs", 0)
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setTitle("Przegrałeś!")
         builder.setMessage("Gra rozpocznie się od nowa")
-        builder.setPositiveButton("OK") { _, which ->
+        builder.setPositiveButton("OK") { _,_ ->
             showToast("Rozpoczynamy nową grę!")
         }
         val dialog: AlertDialog = builder.create()
@@ -80,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setTitle("Trafiłeś!")
         builder.setMessage("Liczba strzałów potrzebnych do zwycięstwa: " + shots.toString() +"\nUzyskane punkty: "+scores.toString())
-        builder.setPositiveButton("Super") { dialog, which ->
+        builder.setPositiveButton("Super") { _, _ ->
             showToast("Rozpoczynamy nową grę!")
         }
         val dialog: AlertDialog = builder.create()
@@ -99,6 +101,16 @@ class MainActivity : AppCompatActivity() {
             showToast("Rekord zapisany na serwerze!")
         } else {
             showToast("Nie udało się zapisać rekordu na serwerze")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                username = data.extras!!.getString("USERNAME")
+            }
         }
     }
 
@@ -161,14 +173,15 @@ class MainActivity : AppCompatActivity() {
         }
         records.setOnClickListener(){
             val intent = Intent(this, RankingActivity::class.java)
+            intent.putExtra("USERNAME", username)
             startActivity(intent)
         }
     }
 }
 
-class saveRecordAsync(record: Int, username: String) : AsyncTask<Void, Void, String>() {
+class saveRecordAsync(record: Int, username: String?) : AsyncTask<Void, Void, String>() {
     val innerRecord: Int = record
-    val innerUsername: String = username
+    val innerUsername: String? = username
     override fun doInBackground(vararg params: Void?): String {
         val text = URL("http://hufiecgniezno.pl/br/record.php?f=add&id="+innerUsername+"&r="+innerRecord.toString()).readText()
         return(text)

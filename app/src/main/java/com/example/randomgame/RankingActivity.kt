@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -24,6 +25,7 @@ import android.net.NetworkInfo
 import android.net.ConnectivityManager
 import android.view.*
 import android.widget.*
+import kotlinx.android.synthetic.main.list_item.*
 import java.lang.Boolean.TRUE
 
 
@@ -124,6 +126,7 @@ class getListAsync() : AsyncTask<Void, Void, String>() {
 }
 
 class RankingActivity : AppCompatActivity() {
+    var login = ""
     fun showToast(message: String){
         val toast = Toast.makeText(
             applicationContext,
@@ -195,6 +198,7 @@ class RankingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
+        login = getIntent().getStringExtra("USERNAME")
 
         val dbHandler = RecordsDBOpenHelper(this, null)
 
@@ -204,6 +208,9 @@ class RankingActivity : AppCompatActivity() {
             getDataFromDb(dbHandler)
         }
 
+        var data = Intent()
+        data.putExtra("USERNAME", login)
+        setResult(RESULT_OK, data)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
