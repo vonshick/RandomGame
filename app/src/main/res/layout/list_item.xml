@@ -7,7 +7,7 @@
             android:layout_width="0px"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000000"
             android:text="Text"
             android:id="@+id/place" tools:ignore="Suspicious0dp"/>
     <TextView
@@ -15,8 +15,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000000"
             android:text="Text"
             android:id="@+id/username" tools:ignore="Suspicious0dp"/>
     <TextView
@@ -24,7 +23,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000000"
             android:text="Text"
             android:id="@+id/result" tools:ignore="Suspicious0dp"/>
 </LinearLayout>

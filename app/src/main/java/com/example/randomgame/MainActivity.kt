@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.widget.Toast
 import kotlin.random.Random
 
@@ -15,6 +16,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.textView
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import java.net.URL
+import android.view.KeyEvent.KEYCODE_BACK
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -59,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         currentNumber = Random.nextInt(0, 20)
     }
 
-    fun showToast(message: String){
+    fun showToast(message: String?){
         Toast.makeText(
             applicationContext,
             message,
@@ -106,7 +110,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 username = data.extras!!.getString("USERNAME")
@@ -139,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         logout.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
 
@@ -174,7 +177,7 @@ class MainActivity : AppCompatActivity() {
         records.setOnClickListener(){
             val intent = Intent(this, RankingActivity::class.java)
             intent.putExtra("USERNAME", username)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
         }
     }
 }

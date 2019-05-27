@@ -199,7 +199,6 @@ class RankingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
         login = getIntent().getStringExtra("USERNAME")
-
         val dbHandler = RecordsDBOpenHelper(this, null)
 
         if (isNetworkAvailable()) {
@@ -207,23 +206,25 @@ class RankingActivity : AppCompatActivity() {
         } else {
             getDataFromDb(dbHandler)
         }
-
-        var data = Intent()
-        data.putExtra("USERNAME", login)
-        setResult(RESULT_OK, data)
+        getSupportActionBar()!!.setHomeButtonEnabled(true);
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button.
-            NavUtils.navigateUpFromSameTask(this)
-            return true
+        if (id==android.R.id.home) {
+            var data = Intent()
+            data.putExtra("USERNAME", login)
+            setResult(RESULT_OK, data)
+            finish();
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 }
