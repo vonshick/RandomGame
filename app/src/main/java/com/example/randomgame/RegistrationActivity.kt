@@ -1,78 +1,17 @@
 package com.example.randomgame
-
-import android.content.ContentValues
-import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NavUtils
-import android.util.Log
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_registration.*
 import kotlinx.android.synthetic.main.activity_registration.loginField
 import kotlinx.android.synthetic.main.activity_registration.password
 import kotlinx.android.synthetic.main.activity_registration.registerButton
-import kotlinx.android.synthetic.main.activity_sign_in.*
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.TextView
-
-class Credentials(username: String, password: String) {
-    var username: String? = username
-    var password: String? = password
-}
-
-class CredentialsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
-    override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " + TABLE_NAME + "(" + USERNAME_COLUMN_NAME +
-                " TEXT PRIMARY KEY," + PASSWORD_COLUMN_NAME + " TEXT" + ")")
-        Log.d("Magic", CREATE_PRODUCTS_TABLE)
-        db.execSQL(CREATE_PRODUCTS_TABLE)
-    }
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
-        onCreate(db)
-    }
-    fun addResult(credentials: Credentials) {
-        val values = ContentValues()
-        values.put(USERNAME_COLUMN_NAME, credentials.username)
-        values.put(PASSWORD_COLUMN_NAME, credentials.password)
-        val db = this.writableDatabase
-        db.insert(TABLE_NAME, null, values)
-        db.close()
-    }
-    fun checkCredentials(login: String, password: String): Boolean {
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT $USERNAME_COLUMN_NAME, $PASSWORD_COLUMN_NAME " +
-                "FROM $TABLE_NAME " +
-                "WHERE $USERNAME_COLUMN_NAME = \"$login\"", null)
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst()
-            val passwordFromDb = cursor.getString(cursor.getColumnIndex(CredentialsDBOpenHelper.PASSWORD_COLUMN_NAME))
-            if(passwordFromDb.equals(password)){
-                cursor.close()
-                return(true)
-            } else {
-                cursor.close()
-                return(false)
-            }
-        } else {
-            return(false)
-        }
-
-    }
-
-    companion object {
-        private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "randomGame6.db"
-        val TABLE_NAME = "credentials"
-        val USERNAME_COLUMN_NAME = "username"
-        val PASSWORD_COLUMN_NAME = "password"
-    }
-}
+import java.net.URL
 
 
 class RegistrationActivity : AppCompatActivity() {
@@ -87,9 +26,9 @@ class RegistrationActivity : AppCompatActivity() {
         toast.show()
     }
 
-    fun saveCredentialsToDb(){
-        val dbHandler = CredentialsDBOpenHelper(this, null)
-        dbHandler.addResult(Credentials(loginField.text.toString(), password.text.toString()))
+    fun saveCredentials(){
+        //TODO
+        //saving on a server
         loginField.getText().clear()
         password.getText().clear()
         confirmation.getText().clear()
@@ -122,7 +61,7 @@ class RegistrationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_registration)
         registerButton.setOnClickListener {
             if(validate()){
-                saveCredentialsToDb()
+                saveCredentials()
             }
 
         }
@@ -143,3 +82,4 @@ class RegistrationActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
+

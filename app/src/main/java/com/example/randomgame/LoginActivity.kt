@@ -3,9 +3,12 @@ package com.example.randomgame
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat.startActivity
+import android.text.TextUtils.isEmpty
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_ranking.*
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_sign_in.loginField
 import kotlinx.android.synthetic.main.activity_sign_in.password
@@ -27,6 +30,30 @@ class SignInActivity : AppCompatActivity() {
         return (password.text.isBlank() || loginField.text.isBlank())
     }
 
+    fun extractPassword(rawCredentials: String): String {
+            val preparedList = rawCredentials.split(",".toRegex())
+            val extractedPassword = preparedList[1]
+                .replace("password", "")
+                .replace("\"", "")
+                .replace("}", "")
+                .replace(":", "")
+            return extractedPassword
+    }
+
+    fun checkCredentials() : Boolean {
+        val rawCredentials = getCredentialsAsync(loginField.text.toString()).execute().get().toString()
+        if (rawCredentials != "{}") {
+            val extractedPassword = extractPassword(rawCredentials)
+            if (extractedPassword == password.text.toString()){
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
@@ -36,9 +63,7 @@ class SignInActivity : AppCompatActivity() {
             if(isEmpty()){
                 showToast("Żadne z pól nie może pozostać puste!")
             } else {
-                val dbHandler = CredentialsDBOpenHelper(this, null)
-                val correctCredentials = dbHandler.checkCredentials(loginField.text.toString(), password.text.toString())
-                if(correctCredentials){
+                if(checkCredentials()){
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("USERNAME", loginField.text.toString())
                     loginField.getText().clear()
