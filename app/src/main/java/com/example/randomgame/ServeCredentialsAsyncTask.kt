@@ -1,14 +1,7 @@
 package com.example.randomgame
 
 import android.os.AsyncTask
-import android.util.Log
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.extensions.jsonBody
-import com.github.kittinunf.fuel.core.response
-import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
-
-//import khttp.post as httpPost
 
 class serveCredentialsAsync(login: String?, password: String?, endpoint: String?) : AsyncTask<Void, Void, String>() {
     val innerLogin: String? = login

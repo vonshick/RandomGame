@@ -3,6 +3,7 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NavUtils
+import android.support.v7.app.AlertDialog
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_registration.*
 import kotlinx.android.synthetic.main.activity_registration.loginField
@@ -26,6 +27,15 @@ class RegistrationActivity : AppCompatActivity() {
         toast.show()
     }
 
+    private fun redundantUserDialog(){
+        val builder = AlertDialog.Builder(this@RegistrationActivity)
+        builder.setTitle("Błąd")
+        builder.setMessage("Login jest już zajęty")
+        builder.setPositiveButton("OK") { _, _ -> }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     private fun saveCredentials(){
         val response = serveCredentialsAsync(loginField.text.toString(), password.text.toString(), "register").execute().get()
         if(response == "OK"){
@@ -34,7 +44,8 @@ class RegistrationActivity : AppCompatActivity() {
             confirmation.getText().clear()
             showToast("Nowy użytkownik utworzony!")
         } else {
-            showToast("Użytkownik o danej nazwie już istnieje")
+            redundantUserDialog()
+//            showToast("Użytkownik o danej nazwie już istnieje")
         }
 
     }
