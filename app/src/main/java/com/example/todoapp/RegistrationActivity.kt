@@ -1,5 +1,4 @@
-package com.example.randomgame
-import android.os.AsyncTask
+package com.example.todoapp
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NavUtils
@@ -12,7 +11,6 @@ import kotlinx.android.synthetic.main.activity_registration.registerButton
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.TextView
-import java.net.URL
 
 
 class RegistrationActivity : AppCompatActivity() {

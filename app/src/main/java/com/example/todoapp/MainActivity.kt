@@ -1,24 +1,17 @@
-package com.example.randomgame
+package com.example.todoapp
 
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
 import android.widget.Toast
 import kotlin.random.Random
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.textView
-import kotlinx.android.synthetic.main.activity_sign_in.*
-import java.net.URL
-import android.view.KeyEvent.KEYCODE_BACK
-
-
 
 
 class MainActivity : AppCompatActivity() {

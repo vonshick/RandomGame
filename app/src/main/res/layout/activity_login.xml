@@ -45,6 +45,7 @@
                 android:id="@+id/loginButton"/>
         <Button
                 android:text="ZAŁÓŻ KONTO"
+                android:onClick="onButtonShowPopupWindowClick"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/registerButton"/>

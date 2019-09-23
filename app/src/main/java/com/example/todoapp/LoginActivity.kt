@@ -1,19 +1,15 @@
-package com.example.randomgame
+package com.example.todoapp
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat.startActivity
-import android.text.TextUtils.isEmpty
 import android.view.Gravity
-import android.widget.TextView
-import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_ranking.*
-import kotlinx.android.synthetic.main.activity_registration.*
-import kotlinx.android.synthetic.main.activity_sign_in.*
-import kotlinx.android.synthetic.main.activity_sign_in.loginField
-import kotlinx.android.synthetic.main.activity_sign_in.password
-import kotlinx.android.synthetic.main.activity_sign_in.registerButton
+import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.loginField
+import kotlinx.android.synthetic.main.activity_login.password
+import kotlinx.android.synthetic.main.activity_login.registerButton
+import android.widget.*
+
 
 class SignInActivity : AppCompatActivity() {
 
@@ -32,9 +28,16 @@ class SignInActivity : AppCompatActivity() {
         return (password.text.isBlank() || loginField.text.isBlank())
     }
 
+    fun saveLogin(login: String?) {
+        val sharedPreference = getSharedPreferences("com.example.todoapp.prefs", 0)
+        var editor = sharedPreference.edit()
+        editor.putString("login", login)
+        editor.apply()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
+        setContentView(R.layout.activity_login)
 
         loginButton.setOnClickListener(){
             if(isEmpty()){
@@ -42,6 +45,7 @@ class SignInActivity : AppCompatActivity() {
             } else {
                 val response = serveCredentialsAsync(loginField.text.toString(), password.text.toString(), "login").execute().get()
                 if(response == "OK"){
+                    saveLogin(loginField.text.toString())
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("USERNAME", loginField.text.toString())
                     loginField.getText().clear()

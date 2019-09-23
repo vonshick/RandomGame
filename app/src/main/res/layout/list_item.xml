@@ -4,26 +4,11 @@
               android:layout_height="match_parent"
               android:padding="10dip">
     <TextView
-            android:layout_width="0px"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:text="Text"
-            android:id="@+id/place" tools:ignore="Suspicious0dp"/>
-    <TextView
             android:layout_width="240px"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="#000000"
             android:text="Text"
-            android:id="@+id/username" tools:ignore="Suspicious0dp"/>
-    <TextView
-            android:layout_width="240px"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textColor="#000000"
-            android:text="Text"
-            android:id="@+id/result" tools:ignore="Suspicious0dp"/>
+            android:id="@+id/title" tools:ignore="Suspicious0dp"/>
 </LinearLayout>

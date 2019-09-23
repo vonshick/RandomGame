@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.example.randomgame">
+          xmlns:tools="http://schemas.android.com/tools" package="com.example.todoapp">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,27 +11,27 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning" android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".SignInActivity">
+        <activity android:name="com.example.todoapp.SignInActivity">
         </activity>
         <activity
-                android:name=".RegistrationActivity"
+                android:name="com.example.todoapp.RegistrationActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:label="Rejestracja użytkownika"
-                android:parentActivityName=".SignInActivity"
+                android:parentActivityName="com.example.todoapp.SignInActivity"
                 android:theme="@style/FullscreenTheme">
         </activity>
         <activity
-                android:name=".RankingActivity"
+                android:name="com.example.todoapp.RankingActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:label="Najlepsi gracze"
-                android:parentActivityName=".MainActivity"
+                android:parentActivityName="com.example.todoapp.MainActivity"
                 android:theme="@style/FullscreenTheme">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.randomgame.MainActivity"/>
+                    android:value="com.example.todoapp.MainActivity"/>
         </activity>
         <activity
-                android:name=".FullscreenActivity"
+                android:name="com.example.todoapp.FullscreenActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:label="@string/title_activity_fullscreen"
                 android:theme="@style/FullscreenTheme">
@@ -41,7 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.todoapp.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

@@ -1,4 +1,4 @@
-package com.example.randomgame
+package com.example.todoapp
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity

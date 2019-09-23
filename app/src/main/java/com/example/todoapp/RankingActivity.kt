@@ -1,4 +1,4 @@
-package com.example.randomgame
+package com.example.todoapp
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,25 +8,13 @@ import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.provider.BaseColumns
-import android.support.v4.app.NavUtils
-import android.util.JsonReader
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_ranking.*
-import org.json.JSONStringer
-import java.io.StringReader
-import java.net.URL
-import android.net.NetworkInfo
 import android.net.ConnectivityManager
 import android.view.*
 import android.widget.*
-import kotlinx.android.synthetic.main.list_item.*
-import java.lang.Boolean.TRUE
 
 
 class Result(var id: Int, userName: String, result: String) {
@@ -59,7 +47,7 @@ class ResultsListViewAdapter(private val activity: Activity, results: ArrayList<
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         var vi = inflater.inflate(R.layout.list_item, null)
         var place = vi.findViewById(R.id.place) as TextView
-        var username = vi.findViewById(R.id.username) as TextView
+        var username = vi.findViewById(R.id.title) as TextView
         var result = vi.findViewById(R.id.result) as TextView
         place.text = results[i].id.toString()+"."
         username.text = results[i].userName
