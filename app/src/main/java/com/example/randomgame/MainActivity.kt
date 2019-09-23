@@ -98,14 +98,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun saveRecord(){
-        val rawText = saveRecordAsync(record, username).execute().get().toString()
-        val response = getResponseLastLine(rawText)
-
-        if(response.equals("OK")){
-            showToast("Rekord zapisany na serwerze!")
-        } else {
-            showToast("Nie udało się zapisać rekordu na serwerze")
-        }
+//        val rawText = saveRecordAsync(record, username).execute().get().toString()
+//        val response = getResponseLastLine(rawText)
+//
+//        if(response.equals("OK")){
+//            showToast("Rekord zapisany na serwerze!")
+//        } else {
+//            showToast("Nie udało się zapisać rekordu na serwerze")
+//        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

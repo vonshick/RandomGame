@@ -15,7 +15,7 @@ import java.net.URL
 
 
 class RegistrationActivity : AppCompatActivity() {
-    fun showToast(message: String){
+    private fun showToast(message: String){
         val toast = Toast.makeText(
             applicationContext,
             message,
@@ -26,25 +26,28 @@ class RegistrationActivity : AppCompatActivity() {
         toast.show()
     }
 
-    fun saveCredentials(){
-        //TODO
-        //saving on a server
-        loginField.getText().clear()
-        password.getText().clear()
-        confirmation.getText().clear()
-        showToast("Nowy użytkownik utworzony!")
+    private fun saveCredentials(){
+        val response = serveCredentialsAsync(loginField.text.toString(), password.text.toString(), "register").execute().get()
+        if(response == "OK"){
+            loginField.getText().clear()
+            password.getText().clear()
+            confirmation.getText().clear()
+            showToast("Nowy użytkownik utworzony!")
+        } else {
+            showToast("Użytkownik o danej nazwie już istnieje")
+        }
+
     }
 
-
-    fun isEmpty(): Boolean {
+    private fun isEmpty(): Boolean {
         return (password.text.isBlank() || confirmation.text.isBlank() || loginField.text.isBlank())
     }
 
-    fun passwordsEqual():Boolean{
+    private fun passwordsEqual():Boolean{
         return password.text.toString().equals(confirmation.text.toString())
     }
 
-    fun validate(): Boolean {
+    private fun validate(): Boolean {
         if (isEmpty()) {
             showToast("Żadne pole nie może być puste!")
             return (false)
@@ -63,7 +66,6 @@ class RegistrationActivity : AppCompatActivity() {
             if(validate()){
                 saveCredentials()
             }
-
         }
 
     }

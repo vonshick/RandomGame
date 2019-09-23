@@ -16,7 +16,7 @@
         <activity
                 android:name=".RegistrationActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
-                android:label="Rejestracja użtkownika"
+                android:label="Rejestracja użytkownika"
                 android:parentActivityName=".SignInActivity"
                 android:theme="@style/FullscreenTheme">
         </activity>

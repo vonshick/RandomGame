@@ -1,0 +1,43 @@
+package com.example.randomgame
+
+import android.os.AsyncTask
+import android.util.Log
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.extensions.jsonBody
+import com.github.kittinunf.fuel.core.response
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
+
+//import khttp.post as httpPost
+
+class serveCredentialsAsync(login: String?, password: String?, endpoint: String?) : AsyncTask<Void, Void, String>() {
+    val innerLogin: String? = login
+    val innerPassword: String? = password
+    val innerEndpoint: String? = endpoint
+
+    private fun processResponse(rawResponse: String): String {
+        val preparedList = rawResponse.split(":".toRegex())
+        val extractedResponse = preparedList[1]
+            .replace("\"", "")
+            .replace("}", "")
+        return extractedResponse
+    }
+
+    override fun doInBackground(vararg params: Void?): String {
+        val jsonPayload = "{ \"login\" : \"" + innerLogin + "\", " + " \"password\" : \"" + innerPassword + "\"}"
+        val url = "https://am-projekt.herokuapp.com/" + innerEndpoint
+        val (request, response, result) = url
+            .httpPost()
+            .body(jsonPayload, Charsets.UTF_8)
+            .header("Content-Type" to "application/json")
+            .responseString()
+
+        return processResponse(result.component1().toString())
+    }
+    override fun onPreExecute() {
+        super.onPreExecute()
+    }
+    override fun onPostExecute(result: String?) {
+        super.onPostExecute(result)
+    }
+}

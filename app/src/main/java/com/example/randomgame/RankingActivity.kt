@@ -112,19 +112,6 @@ class RecordsDBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactor
     }
 }
 
-class getListAsync() : AsyncTask<Void, Void, String>() {
-    override fun doInBackground(vararg params: Void?): String {
-        val text = URL("http://hufiecgniezno.pl/br/record.php?f=get").readText()
-        return(text)
-    }
-    override fun onPreExecute() {
-        super.onPreExecute()
-    }
-    override fun onPostExecute(result: String?) {
-        super.onPostExecute(result)
-    }
-}
-
 class RankingActivity : AppCompatActivity() {
     var login = ""
     fun showToast(message: String){
@@ -173,26 +160,26 @@ class RankingActivity : AppCompatActivity() {
     }
 
     fun downloadDataFromServer(dbHandler: RecordsDBOpenHelper) {
-        var resultsList = ArrayList<Result>()
-        var adapter: ResultsListViewAdapter
-        var result : Result
-        var counter = 1
-        val text = getListAsync().execute().get().toString()
-        val preparedList = text.split("],".toRegex())
-        dbHandler.deleteAllResults()
-        for (elem: String in preparedList) {
-            val dividedAndCleared = elem
-                .replace("[", "")
-                .replace("]", "")
-                .replace("\"", "")
-                .split(",".toRegex())
-            result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
-            resultsList.add(result)
-            dbHandler.addResult(result)
-            counter++
-        }
-        adapter = ResultsListViewAdapter(this, resultsList)
-        listView.adapter = adapter
+//        var resultsList = ArrayList<Result>()
+//        var adapter: ResultsListViewAdapter
+//        var result : Result
+//        var counter = 1
+//        val text = getListAsync().execute().get().toString()
+//        val preparedList = text.split("],".toRegex())
+//        dbHandler.deleteAllResults()
+//        for (elem: String in preparedList) {
+//            val dividedAndCleared = elem
+//                .replace("[", "")
+//                .replace("]", "")
+//                .replace("\"", "")
+//                .split(",".toRegex())
+//            result = Result(counter, dividedAndCleared[1], dividedAndCleared[2])
+//            resultsList.add(result)
+//            dbHandler.addResult(result)
+//            counter++
+//        }
+//        adapter = ResultsListViewAdapter(this, resultsList)
+//        listView.adapter = adapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
