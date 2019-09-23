@@ -46,8 +46,7 @@ class SignInActivity : AppCompatActivity() {
                 val response = serveCredentialsAsync(loginField.text.toString(), password.text.toString(), "login").execute().get()
                 if(response == "OK"){
                     saveLogin(loginField.text.toString())
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("USERNAME", loginField.text.toString())
+                    val intent = Intent(this, TaskListActivity::class.java)
                     loginField.getText().clear()
                     password.getText().clear()
                     startActivity(intent)

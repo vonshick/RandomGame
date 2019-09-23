@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".TaskListActivity">
+
+    <TextView
+            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="TODO"
+            android:textColor="#3F51B5"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textSize="15pt"
+            android:layout_width="match_parent"
+            android:layout_height="32dp" android:id="@+id/toDoLabel"/>
+
+    <ListView
+            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+    />
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp">
+        <Button
+                android:text="DONE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/doneButton" android:layout_weight="1"/>
+        <Button
+                android:text="NEW"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/newTaskButton" android:layout_weight="1"/>
+    </LinearLayout>
+
+</LinearLayout>

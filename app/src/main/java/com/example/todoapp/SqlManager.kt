@@ -14,8 +14,6 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
                 TITLE_COLUMN_NAME
                 + " TEXT," +
                 DESCRIPTION_COLUMN_NAME
-                + " TEXT," +
-                STATUS_COLUMN_NAME
                 + " TEXT" + ")")
         db.execSQL(CREATE_PRODUCTS_TABLE)
     }
@@ -27,7 +25,6 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
         val values = ContentValues()
         values.put(TITLE_COLUMN_NAME, task.title)
         values.put(DESCRIPTION_COLUMN_NAME, task.description)
-        values.put(STATUS_COLUMN_NAME, task.status)
         val db = this.writableDatabase
         db.insert(TABLE_NAME, null, values)
         db.close()
@@ -48,6 +45,5 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
         val COLUMN_ID = "_id"
         val TITLE_COLUMN_NAME = "title"
         val DESCRIPTION_COLUMN_NAME = "description"
-        val STATUS_COLUMN_NAME = "status"
     }
 }

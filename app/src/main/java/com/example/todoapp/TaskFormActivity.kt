@@ -1,13 +1,13 @@
 package com.example.todoapp
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_todo_form.*
 
-class TaskForm : AppCompatActivity() {
+class TaskFormActivity : AppCompatActivity() {
 
     private var title = ""
     private var description = ""
@@ -35,7 +35,7 @@ class TaskForm : AppCompatActivity() {
         } else {
             title = titleEditText.text.toString()
             description = descriptionEditText.text.toString()
-            saveCredentialsToDb(Task(title, description, "TODO"))
+            saveCredentialsToDb(Task(title, description))
             finish()
         }
     }
