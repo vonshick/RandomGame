@@ -24,7 +24,7 @@ class TaskFormActivity : AppCompatActivity() {
     }
 
 
-    private fun saveCredentialsToDb(task: Task){
+    private fun saveTaskToDb(task: Task){
         val dbHandler = TasksDatabaseHelper(this, null)
         dbHandler.addResult(task)
     }
@@ -35,7 +35,7 @@ class TaskFormActivity : AppCompatActivity() {
         } else {
             title = titleEditText.text.toString()
             description = descriptionEditText.text.toString()
-            saveCredentialsToDb(Task(title, description))
+            saveTaskToDb(Task(-1, title, description))
             finish()
         }
     }

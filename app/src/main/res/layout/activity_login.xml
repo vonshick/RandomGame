@@ -20,13 +20,15 @@
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:layout_height="65dp"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="10pt"
+                android:textStyle="bold"
                 android:id="@+id/textView"
                 android:text="Logowanie"/>
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
                 android:ems="10"
                 android:id="@+id/loginField" android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:hint="Login"
@@ -35,17 +37,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
+                android:textColor="#FFFFFF"
                 android:ems="10"
                 android:id="@+id/password" android:hint="Hasło"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
         <Button
                 android:text="ZALOGUJ"
+                android:background="#61009688"
                 android:layout_width="match_parent"
+                android:textColor="#FFFFFF"
+                android:layout_marginVertical="10dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/loginButton"/>
         <Button
                 android:text="ZAŁÓŻ KONTO"
-                android:onClick="onButtonShowPopupWindowClick"
+                android:textColor="#FFFFFF"
+                android:background="#61009688"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/registerButton"/>

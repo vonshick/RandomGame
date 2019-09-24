@@ -33,9 +33,16 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
+
     fun deleteAllResults() {
         val db = this.writableDatabase
         db.delete(TABLE_NAME, null, null)
+        db.close()
+    }
+
+    fun deleteElement(id: Int){
+        val db = this.writableDatabase
+        db.delete(TABLE_NAME, COLUMN_ID + " = ?", arrayOf(id.toString()))
         db.close()
     }
     companion object {

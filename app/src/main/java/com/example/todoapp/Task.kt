@@ -1,7 +1,8 @@
 package com.example.todoapp
 
 
-class Task(title: String, description: String) {
+class Task(id: Int, title: String, description: String) {
+    var id: Int? = id
     var title: String? = title
     var description: String? = description
 }

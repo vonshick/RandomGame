@@ -21,8 +21,8 @@ class TaskListViewAdapter(private val activity: Activity, tasks: ArrayList<Task>
         return tasks.size
     }
 
-    override fun getItem(i: Int): Any {
-        return i
+    override fun getItem(i: Int): Int? {
+        return this.tasks[i].id
     }
 
     override fun getItemId(i: Int): Long {

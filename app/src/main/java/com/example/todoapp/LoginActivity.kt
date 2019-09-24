@@ -13,7 +13,7 @@ import android.widget.*
 
 class SignInActivity : AppCompatActivity() {
 
-    fun showToast(message: String){
+    private fun showToast(message: String){
         val toast = Toast.makeText(
             applicationContext,
             message,
@@ -24,11 +24,11 @@ class SignInActivity : AppCompatActivity() {
         toast.show()
     }
 
-    fun isEmpty(): Boolean {
+    private fun isEmpty(): Boolean {
         return (password.text.isBlank() || loginField.text.isBlank())
     }
 
-    fun saveLogin(login: String?) {
+    private fun saveLogin(login: String?) {
         val sharedPreference = getSharedPreferences("com.example.todoapp.prefs", 0)
         var editor = sharedPreference.edit()
         editor.putString("login", login)
