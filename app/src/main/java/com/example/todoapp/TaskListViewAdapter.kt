@@ -33,7 +33,7 @@ class TaskListViewAdapter(private val activity: Activity, tasks: ArrayList<Task>
     override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup): View {
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         var vi = inflater.inflate(R.layout.list_item, null)
-        var title = vi.findViewById(R.id.place) as TextView
+        var title = vi.findViewById(R.id.title) as TextView
         title.text = tasks[i].title
         return vi
     }

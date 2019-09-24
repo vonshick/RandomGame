@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_todo_form.*
+import kotlinx.android.synthetic.main.activity_task_form.*
 
 class TaskFormActivity : AppCompatActivity() {
 
@@ -42,10 +42,14 @@ class TaskFormActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_todo_form)
+        setContentView(R.layout.activity_task_form)
 
         addButton.setOnClickListener {
             saveTask()
+        }
+
+        cancelButton.setOnClickListener {
+            finish()
         }
 
     }

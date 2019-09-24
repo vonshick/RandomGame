@@ -3,20 +3,20 @@ package com.example.todoapp
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_ranking.*
 import kotlinx.android.synthetic.main.activity_task_list.*
 
-class TaskListActivity : AppCompatActivity() {
+
+open class TaskListActivity : AppCompatActivity() {
 
     private lateinit var dbHandler: TasksDatabaseHelper
 
-    fun getDataFromDb(dbHandler: TasksDatabaseHelper) {
+    fun refreshListView() {
         var counter = 1
         var task: Task
         var taskList = ArrayList<Task>()
 
         val cursor = dbHandler.getAllResults()
-
+        cursor!!.moveToFirst()
         if((cursor != null) && (cursor.getCount() > 0)) {
             task = Task(
                 cursor.getString(cursor.getColumnIndex(TasksDatabaseHelper.TITLE_COLUMN_NAME)),
@@ -34,19 +34,24 @@ class TaskListActivity : AppCompatActivity() {
             }
             cursor.close()
             var adapter = TaskListViewAdapter(this, taskList)
-            listView.adapter = adapter
+            tasksListView.adapter = adapter
         }
+    }
+
+    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent?) {
+        refreshListView()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
+
         dbHandler = TasksDatabaseHelper(this, null)
-        getDataFromDb(dbHandler)
+        refreshListView()
 
         newTaskButton.setOnClickListener {
             val intent = Intent(this, TaskFormActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
         }
     }
 }
