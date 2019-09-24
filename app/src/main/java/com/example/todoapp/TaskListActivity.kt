@@ -3,32 +3,16 @@ package com.example.todoapp
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Gravity
-import android.view.View
 import kotlinx.android.synthetic.main.activity_task_list.*
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_task_form.*
 
 
 open class TaskListActivity : AppCompatActivity() {
 
     private lateinit var dbHandler: TasksDatabaseHelper
     private var chosenListViewElement: Int = -1
-
-    private fun showToast(message: String){
-        val toast = Toast.makeText(
-            applicationContext,
-            message,
-            Toast.LENGTH_SHORT
-        )
-        val v = toast.getView().findViewById(android.R.id.message) as TextView
-        v.gravity = Gravity.CENTER
-        toast.show()
-    }
 
     private fun refreshListView() {
         editTaskButton.isEnabled = false
@@ -40,6 +24,7 @@ open class TaskListActivity : AppCompatActivity() {
 
         val cursor = dbHandler.getAllResults()
         cursor!!.moveToFirst()
+
         if((cursor != null) && (cursor.getCount() > 0)) {
             task = Task(
                 cursor.getInt(cursor.getColumnIndex(TasksDatabaseHelper.COLUMN_ID)),
@@ -67,6 +52,15 @@ open class TaskListActivity : AppCompatActivity() {
         refreshListView()
     }
 
+    private fun saveLogin(task: Task) {
+        val sharedPreference = getSharedPreferences("com.example.todoapp.prefs", 0)
+        var editor = sharedPreference.edit()
+        editor.putInt("id", task.id)
+        editor.putString("title", task.title)
+        editor.putString("description", task.description)
+        editor.apply()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
@@ -76,13 +70,22 @@ open class TaskListActivity : AppCompatActivity() {
 
         newTaskButton.setOnClickListener {
             val intent = Intent(this, TaskFormActivity::class.java)
+            intent.putExtra("EDIT_OR_NEW", "NEW")
             startActivityForResult(intent, 1)
         }
 
         tasksListView.setOnItemClickListener { parent, view, position, id ->
-                chosenListViewElement = id.toInt()
-                editTaskButton.isEnabled = true
-                doneButton.isEnabled = true
+            chosenListViewElement = id.toInt()
+            editTaskButton.isEnabled = true
+            doneButton.isEnabled = true
+        }
+
+        editTaskButton.setOnClickListener {
+            val databaseId = tasksListView.adapter.getItem(chosenListViewElement).toString().toInt()
+            saveLogin(dbHandler.getTask(databaseId))
+            val intent = Intent(this, TaskFormActivity::class.java)
+            intent.putExtra("EDIT_OR_NEW", "EDIT")
+            startActivityForResult(intent, 1)
         }
 
         doneButton.setOnClickListener {

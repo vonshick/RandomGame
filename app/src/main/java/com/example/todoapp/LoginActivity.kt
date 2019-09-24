@@ -28,13 +28,6 @@ class SignInActivity : AppCompatActivity() {
         return (password.text.isBlank() || loginField.text.isBlank())
     }
 
-    private fun saveLogin(login: String?) {
-        val sharedPreference = getSharedPreferences("com.example.todoapp.prefs", 0)
-        var editor = sharedPreference.edit()
-        editor.putString("login", login)
-        editor.apply()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -45,7 +38,6 @@ class SignInActivity : AppCompatActivity() {
             } else {
                 val response = serveCredentialsAsync(loginField.text.toString(), password.text.toString(), "login").execute().get()
                 if(response == "OK"){
-                    saveLogin(loginField.text.toString())
                     val intent = Intent(this, TaskListActivity::class.java)
                     loginField.getText().clear()
                     password.getText().clear()
