@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.notes
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -38,7 +38,7 @@ class SignInActivity : AppCompatActivity() {
             } else {
                 val response = serveCredentialsAsync(loginField.text.toString(), password.text.toString(), "login").execute().get()
                 if(response == "OK"){
-                    val intent = Intent(this, TaskListActivity::class.java)
+                    val intent = Intent(this, NoteListActivity::class.java)
                     loginField.getText().clear()
                     password.getText().clear()
                     startActivity(intent)

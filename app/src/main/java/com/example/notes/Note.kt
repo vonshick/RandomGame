@@ -1,7 +1,7 @@
-package com.example.todoapp
+package com.example.notes
 
 
-class Task(id: Int, title: String, description: String) {
+class Note(id: Int, title: String, description: String) {
     var id: Int = id
     var title: String? = title
     var description: String? = description

@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.notes
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -9,20 +9,20 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-class TaskListViewAdapter(private val activity: Activity, tasks: ArrayList<Task>) : BaseAdapter() {
+class NoteListViewAdapter(private val activity: Activity, notes: ArrayList<Note>) : BaseAdapter() {
 
-    private var tasks: ArrayList<Task>
+    private var notes: ArrayList<Note>
 
     init {
-        this.tasks = tasks
+        this.notes = notes
     }
 
     override fun getCount(): Int {
-        return tasks.size
+        return notes.size
     }
 
     override fun getItem(i: Int): Int? {
-        return this.tasks[i].id
+        return this.notes[i].id
     }
 
     override fun getItemId(i: Int): Long {
@@ -34,7 +34,7 @@ class TaskListViewAdapter(private val activity: Activity, tasks: ArrayList<Task>
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         var vi = inflater.inflate(R.layout.list_item, null)
         var title = vi.findViewById(R.id.title) as TextView
-        title.text = tasks[i].title
+        title.text = notes[i].title
         return vi
     }
 }

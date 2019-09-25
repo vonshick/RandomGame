@@ -1,18 +1,18 @@
-package com.example.todoapp
+package com.example.notes
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_task_form.*
+import kotlinx.android.synthetic.main.activity_note_form.*
 
-class TaskFormActivity : AppCompatActivity() {
+class NoteFormActivity : AppCompatActivity() {
 
     private var title = ""
     private var description = ""
-    private var taskDbId : Int = 0
-    private lateinit var  dbHandler : TasksDatabaseHelper
+    private var noteDbId : Int = 0
+    private lateinit var  dbHandler : NotesDatabaseHelper
     private lateinit var mode : String //edit or create new
 
     fun showToast(message: String){
@@ -26,17 +26,17 @@ class TaskFormActivity : AppCompatActivity() {
         toast.show()
     }
 
-    private fun saveTask()  {
+    private fun saveNote()  {
         if(titleEditText.text.toString() == "") {
-            showToast("Tytuł nie może pozostać pusty!")
+            showToast("Title can not be empty!")
         } else {
             title = titleEditText.text.toString()
             description = descriptionEditText.text.toString()
 
             if(mode == "EDIT") {
-                dbHandler.editTask(taskDbId, title, description)
+                dbHandler.editNote(noteDbId, title, description)
             } else {
-                dbHandler.addResult(Task(-1, title, description))
+                dbHandler.addResult(Note(-1, title, description))
             }
 
             finish()
@@ -44,16 +44,16 @@ class TaskFormActivity : AppCompatActivity() {
     }
 
     fun restoreSavedData(){
-        val sharedPreference = getSharedPreferences("com.example.todoapp.prefs", 0)
+        val sharedPreference = getSharedPreferences("com.example.notes.prefs", 0)
         titleEditText.setText(sharedPreference.getString("title", ""))
         descriptionEditText.setText(sharedPreference.getString("description", ""))
-        taskDbId = sharedPreference.getInt("id", 0)
+        noteDbId = sharedPreference.getInt("id", 0)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_form)
-        dbHandler = TasksDatabaseHelper(this, null)
+        setContentView(R.layout.activity_note_form)
+        dbHandler = NotesDatabaseHelper(this, null)
 
         if (savedInstanceState == null) {
             val extras = intent.extras
@@ -69,7 +69,7 @@ class TaskFormActivity : AppCompatActivity() {
         }
 
         addButton.setOnClickListener {
-            saveTask()
+            saveNote()
         }
 
         cancelButton.setOnClickListener {

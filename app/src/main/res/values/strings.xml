@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDoApp</string>
+    <string name="app_name">Notes</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -16,10 +16,8 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="za_konto">ZAŁÓŻ KONTO</string>
-    <string name="dodaj_u_ytkownika">Dodaj użytkownika</string>
     <string name="login">Login</string>
-    <string name="has_o">Hasło</string>
-    <string name="powt_rz_has_o">Powtórz hasło</string>
-    <string name="zarejestruj">Zarejestruj</string>
+    <string name="sign_up">Sign up</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat password</string>
 </resources>

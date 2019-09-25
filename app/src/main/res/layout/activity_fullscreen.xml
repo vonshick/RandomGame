@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="#0099cc"
+             android:background="#B0E273"
              tools:context=".FullscreenActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
@@ -13,11 +13,11 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:keepScreenOn="true"
-              android:textColor="#FFFFFF"
+              android:textColor="#000000"
               android:textStyle="bold"
               android:textSize="50sp"
               android:gravity="center"
-              android:text="ToDoApp"/>
+              android:text="Notes"/>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->

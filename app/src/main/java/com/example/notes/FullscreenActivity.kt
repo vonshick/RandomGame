@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.notes
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity

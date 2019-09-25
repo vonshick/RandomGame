@@ -1,13 +1,12 @@
-package com.example.todoapp
+package com.example.notes
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.os.Build.ID
 
-class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
+class NotesDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " +
                 TABLE_NAME + "("
@@ -22,10 +21,10 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
         onCreate(db)
     }
-    fun addResult(task: Task) {
+    fun addResult(note: Note) {
         val values = ContentValues()
-        values.put(TITLE_COLUMN_NAME, task.title)
-        values.put(DESCRIPTION_COLUMN_NAME, task.description)
+        values.put(TITLE_COLUMN_NAME, note.title)
+        values.put(DESCRIPTION_COLUMN_NAME, note.description)
         val db = this.writableDatabase
         db.insert(TABLE_NAME, null, values)
         db.close()
@@ -35,7 +34,7 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
 
-    fun getTask(id: Int): Task {
+    fun getNote(id: Int): Note {
         val db = writableDatabase
         val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = $id"
         val cursor = db.rawQuery(selectQuery, null)
@@ -45,10 +44,10 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
         val description = cursor.getString(cursor.getColumnIndex(DESCRIPTION_COLUMN_NAME))
         cursor.close()
 
-        return Task(id, title, description)
+        return Note(id, title, description)
     }
 
-    fun editTask(id: Int, title: String, description: String) {
+    fun editNote(id: Int, title: String, description: String) {
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(TITLE_COLUMN_NAME, title)
@@ -64,8 +63,8 @@ class TasksDatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactor
     }
     companion object {
         private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "todoApp_v2.db"
-        val TABLE_NAME = "tasks"
+        private val DATABASE_NAME = "notes_v2.db"
+        val TABLE_NAME = "notes"
         val COLUMN_ID = "_id"
         val TITLE_COLUMN_NAME = "title"
         val DESCRIPTION_COLUMN_NAME = "description"

@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.notes
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NavUtils
@@ -27,8 +27,8 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun redundantUserDialog(){
         val builder = AlertDialog.Builder(this@RegistrationActivity)
-        builder.setTitle("Błąd")
-        builder.setMessage("Login jest już zajęty")
+        builder.setTitle("Error")
+        builder.setMessage("User already exists!")
         builder.setPositiveButton("OK") { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
@@ -40,10 +40,9 @@ class RegistrationActivity : AppCompatActivity() {
             loginField.getText().clear()
             password.getText().clear()
             confirmation.getText().clear()
-            showToast("Nowy użytkownik utworzony!")
+            showToast("New user registered")
         } else {
             redundantUserDialog()
-//            showToast("Użytkownik o danej nazwie już istnieje")
         }
 
     }
@@ -58,10 +57,10 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun validate(): Boolean {
         if (isEmpty()) {
-            showToast("Żadne pole nie może być puste!")
+            showToast("None of fields can be empty!")
             return (false)
         } else if (!passwordsEqual()) {
-            showToast("Hasła nie są takie same!")
+            showToast("Passwords are not equal!")
             return (false)
         } else {
             return (true)
@@ -79,14 +78,9 @@ class RegistrationActivity : AppCompatActivity() {
 
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button.
             NavUtils.navigateUpFromSameTask(this)
             return true
         }
