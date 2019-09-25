@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_login.registerButton
 import android.widget.*
 
 
-class SignInActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     private fun showToast(message: String){
         val toast = Toast.makeText(

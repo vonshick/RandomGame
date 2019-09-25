@@ -13,7 +13,7 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name="com.example.notes.SignInActivity">
+        <activity android:name="com.example.notes.LoginActivity">
         </activity>
         <activity android:name="com.example.notes.NoteListActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -24,7 +24,7 @@
                 android:name="com.example.notes.RegistrationActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:label="User registration"
-                android:parentActivityName="com.example.notes.SignInActivity"
+                android:parentActivityName="com.example.notes.LoginActivity"
                 android:theme="@style/FullscreenTheme">
         </activity>
         <activity

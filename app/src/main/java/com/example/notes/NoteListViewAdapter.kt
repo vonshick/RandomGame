@@ -29,12 +29,22 @@ class NoteListViewAdapter(private val activity: Activity, notes: ArrayList<Note>
         return i.toLong()
     }
 
+    private fun cutDescription(description: String): String {
+        return if (description.length > 50) {
+            description.substring(0, 50) + "..."
+        } else {
+            description
+        }
+    }
+
     @SuppressLint("InflateParams", "ViewHolder")
     override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup): View {
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         var vi = inflater.inflate(R.layout.list_item, null)
         var title = vi.findViewById(R.id.title) as TextView
+        var description = vi.findViewById(R.id.description) as TextView
         title.text = notes[i].title
+        description.text = notes[i].description?.let { cutDescription(it) }
         return vi
     }
 }
