@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/doneButton" android:layout_weight="1"/>
         <Button
-                android:text="EDYTUJ"
+                android:text="SZCZEGÓŁY"
                 android:enabled="false"
                 android:layout_marginEnd="20dp"
                 android:layout_width="wrap_content"

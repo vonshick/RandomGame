@@ -24,8 +24,11 @@ class serveCredentialsAsync(login: String?, password: String?, endpoint: String?
             .body(jsonPayload, Charsets.UTF_8)
             .header("Content-Type" to "application/json")
             .responseString()
-
-        return processResponse(result.component1().toString())
+        return if(result.component1() == null){
+            "error"
+        } else {
+            processResponse(result.component1().toString())
+        }
     }
     override fun onPreExecute() {
         super.onPreExecute()
